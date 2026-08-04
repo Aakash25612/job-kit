@@ -39,7 +39,7 @@ export async function POST(request: Request) {
 
     const cv = await chatJson<CvDocument>(
       CV_SYSTEM,
-      `Tailor the CV to this job description:\n\n${jobDescription}`,
+      `Tailor the full CV to this job description. Make the experience section especially similar to what this role needs: reorder, rewrite, and prioritize bullets so his real work reads like a match for this job. Do not invent facts.\n\nJob description:\n\n${jobDescription}`,
     );
 
     return NextResponse.json({ cv: cleanCv(cv) });
