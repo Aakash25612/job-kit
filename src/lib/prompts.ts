@@ -14,10 +14,10 @@ Rules:
   - Rewrite each bullet in the language of the job description (stack, domain, responsibilities) when his real work supports it.
   - Highlight outcomes that match what the job cares about (scale, ownership, team lead, AI, product delivery, etc.).
   - Drop or shorten bullets that do not help this application.
-  - Keep at most 4 short bullets per role (one sentence each), focused on this job.
+  - Keep 3 to 5 concise bullets per role (one sentence each), focused on this job.
   - Role titles stay truthful, but the one-line role summary and bullets should sound aligned with the target role.
 - Prefer keywords from the job description when they honestly map to his experience.
-- MUST fit on one A4 page: summary max 4 sentences, at most 6 skill rows, at most 3 experience roles, no filler.
+- Target one full A4 page of content: summary about 3 to 4 sentences, up to 6 skill rows, 3 experience roles. Enough substance to fill the page, not a sparse stub.
 - ${NO_EM_DASH}
 - Return valid JSON only matching this shape:
 {

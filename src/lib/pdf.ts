@@ -21,76 +21,39 @@ type Density = {
   sectionRuleGap: number;
   jobRuleGap: number;
   nameGap: number;
-  titleGap: number;
-  contactGap: number;
+  titleLine: number;
+  contactLine: number;
   afterSectionTitle: number;
+  jobTitleLine: number;
 };
 
-const NORMAL: Density = {
-  margin: 40,
-  nameSize: 16,
-  titleSize: 10,
-  contactSize: 8.5,
-  sectionSize: 10,
-  bodySize: 9,
-  jobTitleSize: 9.5,
-  metaSize: 8,
-  lineGap: 11,
-  sectionGap: 10,
-  jobGap: 6,
-  bulletGap: 1.5,
-  headerAfter: 10,
-  sectionRuleGap: 8,
-  jobRuleGap: 8,
-  nameGap: 18,
-  titleGap: 12,
-  contactGap: 10,
-  afterSectionTitle: 4,
+/** Readable base. Scaled up/down so content fills one A4 page. */
+const BASE: Density = {
+  margin: 42,
+  nameSize: 17,
+  titleSize: 10.5,
+  contactSize: 9,
+  sectionSize: 10.5,
+  bodySize: 9.5,
+  jobTitleSize: 10,
+  metaSize: 8.5,
+  lineGap: 12,
+  sectionGap: 12,
+  jobGap: 8,
+  bulletGap: 2,
+  headerAfter: 12,
+  sectionRuleGap: 10,
+  jobRuleGap: 10,
+  nameGap: 20,
+  titleLine: 13,
+  contactLine: 11,
+  afterSectionTitle: 5,
+  jobTitleLine: 12,
 };
 
-const COMPACT: Density = {
-  margin: 32,
-  nameSize: 14.5,
-  titleSize: 9.5,
-  contactSize: 8,
-  sectionSize: 9.5,
-  bodySize: 8.2,
-  jobTitleSize: 9,
-  metaSize: 7.5,
-  lineGap: 10,
-  sectionGap: 7,
-  jobGap: 4,
-  bulletGap: 1,
-  headerAfter: 8,
-  sectionRuleGap: 6,
-  jobRuleGap: 6,
-  nameGap: 15,
-  titleGap: 11,
-  contactGap: 8,
-  afterSectionTitle: 3,
-};
-
-const DENSE: Density = {
-  margin: 28,
-  nameSize: 13.5,
-  titleSize: 9,
-  contactSize: 7.5,
-  sectionSize: 9,
-  bodySize: 7.6,
-  jobTitleSize: 8.5,
-  metaSize: 7,
-  lineGap: 9.2,
-  sectionGap: 5,
-  jobGap: 3,
-  bulletGap: 0.5,
-  headerAfter: 6,
-  sectionRuleGap: 5,
-  jobRuleGap: 5,
-  nameGap: 14,
-  titleGap: 10,
-  contactGap: 6,
-  afterSectionTitle: 2,
-};
+const MIN_SCALE = 0.88;
+const MAX_SCALE = 1.22;
+const TARGET_FILL = 0.96; // use most of the page, leave a little bottom margin
 
 function wrapText(
   doc: jsPDF,
@@ -102,93 +65,109 @@ function wrapText(
   return doc.splitTextToSize(text, maxWidth);
 }
 
-function estimateHeight(doc: jsPDF, cv: CvDocument, d: Density): number {
-  const contentWidth = PAGE_WIDTH - d.margin * 2;
-  let h = d.margin;
-
-  h += d.nameGap;
-  h += wrapText(doc, cv.title, contentWidth, d.titleSize).length * d.titleGap;
-  h += 3;
-  h +=
-    wrapText(doc, cv.contact, contentWidth, d.contactSize).length *
-      (d.contactSize + 2) +
-    d.contactGap;
-  h += d.headerAfter;
-
-  // SUMMARY
-  h += d.sectionSize + d.afterSectionTitle + d.sectionRuleGap;
-  h +=
-    wrapText(doc, cv.summary, contentWidth, d.bodySize).length * d.lineGap +
-    d.sectionGap;
-
-  // SKILLS
-  h += d.sectionSize + d.afterSectionTitle + d.sectionRuleGap;
-  for (const skill of cv.skills || []) {
-    const label = `${skill.label}: `;
-    doc.setFontSize(d.bodySize);
-    const labelWidth = doc.getTextWidth(label);
-    const valueLines = wrapText(
-      doc,
-      skill.value,
-      Math.max(40, contentWidth - labelWidth),
-      d.bodySize,
-    );
-    h += Math.max(1, valueLines.length) * d.lineGap + 1;
-  }
-  h += d.sectionGap;
-
-  // EXPERIENCE
-  h += d.sectionSize + d.afterSectionTitle + d.sectionRuleGap;
-  const jobs = cv.experience || [];
-  jobs.forEach((job, index) => {
-    const heading = `${job.role} - ${job.company}`;
-    h += wrapText(doc, heading, contentWidth, d.jobTitleSize).length * 11;
-    h += d.metaSize + 3;
-    if (job.summary) {
-      h += wrapText(doc, job.summary, contentWidth, d.bodySize).length * d.lineGap + 2;
-    }
-    for (const bullet of job.bullets || []) {
-      h +=
-        wrapText(doc, `• ${bullet}`, contentWidth - 6, d.bodySize).length *
-          d.lineGap +
-        d.bulletGap;
-    }
-    h += d.jobGap;
-    if (index < jobs.length - 1) h += d.jobRuleGap;
-  });
-
-  return h + d.margin;
-}
-
-function pickDensity(doc: jsPDF, cv: CvDocument): Density {
-  const maxY = PAGE_HEIGHT;
-  if (estimateHeight(doc, cv, NORMAL) <= maxY) return NORMAL;
-  if (estimateHeight(doc, cv, COMPACT) <= maxY) return COMPACT;
-  return DENSE;
-}
-
-/** Keep content to one page: trim trailing bullets if still too tall. */
-function fitCv(cv: CvDocument): CvDocument {
+function scaleDensity(d: Density, scale: number): Density {
+  const s = (n: number) => Math.max(6, n * scale);
   return {
-    ...cv,
-    summary: cv.summary,
-    skills: (cv.skills || []).slice(0, 6),
-    experience: (cv.experience || []).slice(0, 3).map((job) => ({
-      ...job,
-      bullets: (job.bullets || []).slice(0, 4),
-    })),
+    margin: Math.max(28, d.margin * Math.min(1, 0.55 + scale * 0.45)),
+    nameSize: s(d.nameSize),
+    titleSize: s(d.titleSize),
+    contactSize: s(d.contactSize),
+    sectionSize: s(d.sectionSize),
+    bodySize: s(d.bodySize),
+    jobTitleSize: s(d.jobTitleSize),
+    metaSize: s(d.metaSize),
+    lineGap: s(d.lineGap),
+    sectionGap: s(d.sectionGap),
+    jobGap: s(d.jobGap),
+    bulletGap: Math.max(0.5, d.bulletGap * scale),
+    headerAfter: s(d.headerAfter),
+    sectionRuleGap: s(d.sectionRuleGap),
+    jobRuleGap: s(d.jobRuleGap),
+    nameGap: s(d.nameGap),
+    titleLine: s(d.titleLine),
+    contactLine: s(d.contactLine),
+    afterSectionTitle: s(d.afterSectionTitle),
+    jobTitleLine: s(d.jobTitleLine),
   };
 }
 
+function measureHeight(doc: jsPDF, cv: CvDocument, dens: Density): number {
+  const w = PAGE_WIDTH - dens.margin * 2;
+  let h = dens.margin;
+
+  h += dens.nameGap;
+  h += wrapText(doc, cv.title, w, dens.titleSize).length * dens.titleLine + 2;
+  h +=
+    wrapText(doc, cv.contact, w, dens.contactSize).length * dens.contactLine + 4;
+  h += dens.headerAfter;
+
+  h += dens.sectionSize + dens.afterSectionTitle + dens.sectionRuleGap;
+  h +=
+    wrapText(doc, cv.summary, w, dens.bodySize).length * dens.lineGap +
+    dens.sectionGap;
+
+  h += dens.sectionSize + dens.afterSectionTitle + dens.sectionRuleGap;
+  for (const skill of cv.skills || []) {
+    doc.setFontSize(dens.bodySize);
+    const labelWidth = doc.getTextWidth(`${skill.label}: `);
+    const lines = wrapText(
+      doc,
+      skill.value,
+      Math.max(40, w - labelWidth),
+      dens.bodySize,
+    );
+    h += Math.max(1, lines.length) * dens.lineGap + 1;
+  }
+  h += dens.sectionGap;
+
+  h += dens.sectionSize + dens.afterSectionTitle + dens.sectionRuleGap;
+  const jobs = cv.experience || [];
+  jobs.forEach((job, index) => {
+    h +=
+      wrapText(doc, `${job.role} - ${job.company}`, w, dens.jobTitleSize)
+        .length * dens.jobTitleLine;
+    h += dens.metaSize + 3;
+    if (job.summary) {
+      h +=
+        wrapText(doc, job.summary, w, dens.bodySize).length * dens.lineGap + 2;
+    }
+    for (const bullet of job.bullets || []) {
+      h +=
+        wrapText(doc, `• ${bullet}`, w - 6, dens.bodySize).length *
+          dens.lineGap +
+        dens.bulletGap;
+    }
+    h += dens.jobGap;
+    if (index < jobs.length - 1) h += dens.jobRuleGap;
+  });
+
+  return h + dens.margin;
+}
+
+function densityForPage(doc: jsPDF, cv: CvDocument): Density {
+  const available = PAGE_HEIGHT * TARGET_FILL;
+  const baseHeight = measureHeight(doc, cv, BASE);
+  let scale = available / Math.max(1, baseHeight);
+  scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale));
+
+  // If still overflowing at min scale, try again with slightly reduced margin density.
+  let dens = scaleDensity(BASE, scale);
+  let height = measureHeight(doc, cv, dens);
+  let guard = 0;
+  while (height > PAGE_HEIGHT - 8 && dens.bodySize > 7.2 && guard < 8) {
+    dens = scaleDensity(dens, 0.96);
+    height = measureHeight(doc, cv, dens);
+    guard += 1;
+  }
+  return dens;
+}
+
 export function downloadCvPdf(cv: CvDocument, filename?: string) {
-  const fitted = fitCv(cv);
   const doc = new jsPDF({ unit: "pt", format: "a4" });
-  const d = pickDensity(doc, fitted);
+  const d = densityForPage(doc, cv);
   const contentWidth = PAGE_WIDTH - d.margin * 2;
   let y = d.margin;
-
-  // Never spill to page 2: clamp drawing within the first page.
-  const bottom = PAGE_HEIGHT - d.margin;
+  const bottom = PAGE_HEIGHT - Math.min(d.margin, 28);
 
   const drawRule = (
     color: [number, number, number],
@@ -202,12 +181,12 @@ export function downloadCvPdf(cv: CvDocument, filename?: string) {
     y += gapAfter;
   };
 
-  const headerRule = () => drawRule([120, 120, 120], 1.0, d.headerAfter);
-  const sectionRule = () => drawRule([180, 180, 180], 0.65, d.sectionRuleGap);
-  const jobRule = () => drawRule([210, 210, 210], 0.45, d.jobRuleGap);
+  const headerRule = () => drawRule([120, 120, 120], 1.05, d.headerAfter);
+  const sectionRule = () => drawRule([180, 180, 180], 0.7, d.sectionRuleGap);
+  const jobRule = () => drawRule([210, 210, 210], 0.5, d.jobRuleGap);
 
   const sectionTitle = (title: string) => {
-    if (y + 20 > bottom) return;
+    if (y + 22 > bottom) return;
     doc.setFont("helvetica", "bold");
     doc.setFontSize(d.sectionSize);
     doc.setTextColor(20, 20, 20);
@@ -220,21 +199,21 @@ export function downloadCvPdf(cv: CvDocument, filename?: string) {
   doc.setFont("helvetica", "bold");
   doc.setFontSize(d.nameSize);
   doc.setTextColor(20, 20, 20);
-  doc.text(fitted.name, d.margin, y);
+  doc.text(cv.name, d.margin, y);
   y += d.nameGap;
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(d.titleSize);
   doc.setTextColor(55, 55, 55);
-  const titleLines = wrapText(doc, fitted.title, contentWidth, d.titleSize);
+  const titleLines = wrapText(doc, cv.title, contentWidth, d.titleSize);
   doc.text(titleLines, d.margin, y);
-  y += titleLines.length * d.titleGap + 2;
+  y += titleLines.length * d.titleLine + 2;
 
   doc.setFontSize(d.contactSize);
   doc.setTextColor(80, 80, 80);
-  const contactLines = wrapText(doc, fitted.contact, contentWidth, d.contactSize);
+  const contactLines = wrapText(doc, cv.contact, contentWidth, d.contactSize);
   doc.text(contactLines, d.margin, y);
-  y += contactLines.length * (d.contactSize + 2) + 4;
+  y += contactLines.length * d.contactLine + 4;
   headerRule();
 
   // Summary
@@ -242,15 +221,13 @@ export function downloadCvPdf(cv: CvDocument, filename?: string) {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(d.bodySize);
   doc.setTextColor(40, 40, 40);
-  const summaryLines = wrapText(doc, fitted.summary, contentWidth, d.bodySize);
-  if (y + summaryLines.length * d.lineGap <= bottom) {
-    doc.text(summaryLines, d.margin, y);
-    y += summaryLines.length * d.lineGap + d.sectionGap;
-  }
+  const summaryLines = wrapText(doc, cv.summary, contentWidth, d.bodySize);
+  doc.text(summaryLines, d.margin, y);
+  y += summaryLines.length * d.lineGap + d.sectionGap;
 
   // Skills
   sectionTitle("TECHNICAL SKILLS");
-  for (const skill of fitted.skills || []) {
+  for (const skill of cv.skills || []) {
     if (y + d.lineGap > bottom) break;
     doc.setFont("helvetica", "bold");
     doc.setFontSize(d.bodySize);
@@ -274,13 +251,13 @@ export function downloadCvPdf(cv: CvDocument, filename?: string) {
     }
     y += 1;
   }
-  y += d.sectionGap - 2;
+  y += d.sectionGap;
 
   // Experience
   sectionTitle("EXPERIENCE");
-  const jobs = fitted.experience || [];
+  const jobs = cv.experience || [];
   jobs.forEach((job, index) => {
-    if (y + 28 > bottom) return;
+    if (y + 30 > bottom) return;
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(d.jobTitleSize);
@@ -288,7 +265,7 @@ export function downloadCvPdf(cv: CvDocument, filename?: string) {
     const heading = `${job.role} - ${job.company}`;
     const headingLines = wrapText(doc, heading, contentWidth, d.jobTitleSize);
     doc.text(headingLines, d.margin, y);
-    y += headingLines.length * (d.jobTitleSize + 2);
+    y += headingLines.length * d.jobTitleLine;
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(d.metaSize);
@@ -328,8 +305,9 @@ export function downloadCvPdf(cv: CvDocument, filename?: string) {
     }
   });
 
-  const safeName = (
-    filename || `${fitted.name.replace(/\s+/g, "_")}_CV`
-  ).replace(/[^\w.-]+/g, "_");
+  const safeName = (filename || `${cv.name.replace(/\s+/g, "_")}_CV`).replace(
+    /[^\w.-]+/g,
+    "_",
+  );
   doc.save(`${safeName}.pdf`);
 }
