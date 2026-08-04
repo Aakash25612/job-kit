@@ -39,7 +39,19 @@ export async function POST(request: Request) {
 
     const cv = await chatJson<CvDocument>(
       CV_SYSTEM,
-      `Tailor the full CV to this job description for one full A4 page (not sparse, not overflowing). Make the experience section especially similar to what this role needs: reorder, rewrite, and prioritize bullets so his real work reads like a match for this job. Use 3 roles with 3 to 5 concise bullets each. Do not invent facts.\n\nJob description:\n\n${jobDescription}`,
+      `Build a DEDICATED CV for this job description, one full A4 page (not sparse, not overflowing).
+
+Requirements:
+- Keep real employers, dates, contact, and seniority from the base CV.
+- Skills must match the job stack and domain.
+- Map every major JD responsibility (including numbered items if present) into concrete experience bullets and/or skill lines.
+- Rewrite bullets in the job's language so the CV feels written for this role, not a lightly edited generic resume.
+- Use 3 roles with 3 to 5 concise bullets each.
+- Do not invent fake companies or fake dates.
+
+Job description:
+
+${jobDescription}`,
     );
 
     return NextResponse.json({ cv: cleanCv(cv) });
