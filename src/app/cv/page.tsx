@@ -47,7 +47,7 @@ export default function CvBuilderPage() {
               <button
                 type="button"
                 onClick={() => downloadCvPdf(cv, "Aakash_Goel_Tailored_CV")}
-                className="shrink-0 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50"
+                className="shrink-0 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-red-700"
               >
                 Download PDF
               </button>
