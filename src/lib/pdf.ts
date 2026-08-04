@@ -27,12 +27,35 @@ export function downloadCvPdf(cv: CvDocument, filename?: string) {
     }
   };
 
-  const line = (gap = 10) => {
+  const drawRule = (
+    color: [number, number, number],
+    width: number,
+    gapAfter: number,
+  ) => {
     ensureSpace(8);
-    doc.setDrawColor(210, 210, 210);
-    doc.setLineWidth(0.6);
+    doc.setDrawColor(...color);
+    doc.setLineWidth(width);
     doc.line(MARGIN, y, PAGE_WIDTH - MARGIN, y);
-    y += gap;
+    y += gapAfter;
+  };
+
+  /** Darker rule under name / contact header */
+  const headerRule = () => drawRule([120, 120, 120], 1.1, 14);
+
+  /** Thin rule under section titles */
+  const sectionRule = () => drawRule([180, 180, 180], 0.7, 12);
+
+  /** Light hairline between experience jobs */
+  const jobRule = () => drawRule([210, 210, 210], 0.5, 12);
+
+  const sectionTitle = (title: string) => {
+    ensureSpace(28);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.setTextColor(20, 20, 20);
+    doc.text(title, MARGIN, y);
+    y += 6;
+    sectionRule();
   };
 
   // Header
@@ -54,34 +77,27 @@ export function downloadCvPdf(cv: CvDocument, filename?: string) {
   const contactLines = wrapText(doc, cv.contact, CONTENT_WIDTH, 9);
   doc.text(contactLines, MARGIN, y);
   y += contactLines.length * 12 + 8;
-  line(14);
+  headerRule();
 
   // Summary
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  doc.setTextColor(20, 20, 20);
-  doc.text("SUMMARY", MARGIN, y);
-  y += 14;
-
+  sectionTitle("SUMMARY");
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9.5);
   doc.setTextColor(40, 40, 40);
   const summaryLines = wrapText(doc, cv.summary, CONTENT_WIDTH, 9.5);
   ensureSpace(summaryLines.length * 12);
   doc.text(summaryLines, MARGIN, y);
-  y += summaryLines.length * 12 + 10;
-  line(14);
+  y += summaryLines.length * 12 + 14;
 
   // Skills
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  doc.setTextColor(20, 20, 20);
-  doc.text("TECHNICAL SKILLS", MARGIN, y);
-  y += 14;
-
+  sectionTitle("TECHNICAL SKILLS");
   for (const skill of cv.skills || []) {
-    const text = `${skill.label}: ${skill.value}`;
-    const lines = wrapText(doc, text, CONTENT_WIDTH, 9.5);
+    const lines = wrapText(
+      doc,
+      `${skill.label}: ${skill.value}`,
+      CONTENT_WIDTH,
+      9.5,
+    );
     ensureSpace(lines.length * 12 + 2);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(9.5);
@@ -104,20 +120,13 @@ export function downloadCvPdf(cv: CvDocument, filename?: string) {
       y += 12;
     }
     y += 2;
-    void lines;
   }
-
-  y += 6;
-  line(14);
+  y += 10;
 
   // Experience
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(11);
-  doc.setTextColor(20, 20, 20);
-  doc.text("EXPERIENCE", MARGIN, y);
-  y += 16;
-
-  for (const job of cv.experience || []) {
+  sectionTitle("EXPERIENCE");
+  const jobs = cv.experience || [];
+  jobs.forEach((job, index) => {
     ensureSpace(48);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10);
@@ -153,8 +162,11 @@ export function downloadCvPdf(cv: CvDocument, filename?: string) {
       y += bulletLines.length * 12 + 2;
     }
 
-    y += 10;
-  }
+    y += 8;
+    if (index < jobs.length - 1) {
+      jobRule();
+    }
+  });
 
   const safeName = (filename || `${cv.name.replace(/\s+/g, "_")}_CV`).replace(
     /[^\w.-]+/g,
