@@ -35,12 +35,23 @@ export default function CvBuilderPage() {
       <Nav active="cv" />
       <main className="mx-auto grid max-w-6xl gap-8 px-4 py-8 lg:grid-cols-2">
         <section className="space-y-4">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight">CV Builder</h1>
-            <p className="mt-1 text-sm text-zinc-600">
-              Paste the job description. We rewrite your base CV to match it,
-              then you download a PDF.
-            </p>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h1 className="text-2xl font-semibold tracking-tight">CV Builder</h1>
+              <p className="mt-1 text-sm text-zinc-600">
+                Paste the job description. We rewrite your base CV to match it,
+                then you download a PDF.
+              </p>
+            </div>
+            {cv && (
+              <button
+                type="button"
+                onClick={() => downloadCvPdf(cv, "Aakash_Goel_Tailored_CV")}
+                className="shrink-0 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50"
+              >
+                Download PDF
+              </button>
+            )}
           </div>
 
           <textarea
@@ -59,15 +70,6 @@ export default function CvBuilderPage() {
             >
               {loading ? "Building CV..." : "Build tailored CV"}
             </button>
-            {cv && (
-              <button
-                type="button"
-                onClick={() => downloadCvPdf(cv, "Aakash_Goel_Tailored_CV")}
-                className="rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50"
-              >
-                Download PDF
-              </button>
-            )}
           </div>
 
           {error && (
