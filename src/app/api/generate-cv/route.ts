@@ -47,7 +47,7 @@ function cleanCv(cv: CvDocument): CvDocument {
       dates: stripEmDashes(e.dates),
       location: stripEmDashes(e.location),
       summary: e.summary ? stripEmDashes(e.summary) : undefined,
-      bullets: (e.bullets || []).map(stripEmDashes),
+      bullets: (e.bullets || []).map(stripEmDashes).slice(0, 4),
     })),
     projects: ensureUpworkProject(cv.projects || []),
   };
@@ -73,7 +73,8 @@ Requirements:
 - Skills must match the job stack and domain.
 - Map every major JD responsibility (including numbered items if present) into concrete experience bullets and/or skill lines.
 - Rewrite bullets in the job's language so the CV feels written for this role, not a lightly edited generic resume.
-- Always use exactly 4 experience roles from the base CV, with 3 to 5 concise bullets on the strongest roles (later roles can be shorter).
+- Always use exactly 4 experience roles from the base CV.
+- Under every experience role, always include exactly 4 concise bullets that use the job's keywords and stack where relevant.
 - Always include a PROJECTS & PROFILE section with 2 to 3 items from the base CV, and always include Upwork with https://www.upwork.com/freelancers/aakashgoel
 - Do not invent fake companies or fake dates.
 

@@ -19,13 +19,13 @@ Dedicated matching (aggressive, not 100% literal to the base CV stack):
 - Avoid awkward keyword glue (do not force unrelated product words onto the wrong role). Rewrite the story so responsibilities mirror the job instead of stuffing one keyword into an unrelated bullet.
 - Prefer the job's exact tech names and phrases when covering requirements.
 - Reorder roles and bullets so the strongest match comes first.
-- Drop bullets that do not help this application.
-- Always include exactly 4 experience roles from the base CV (all four real employers/roles). Prefer 3 to 5 concise bullets on the strongest roles; later roles can be shorter (2 to 3 bullets).
+- Always include exactly 4 experience roles from the base CV (all four real employers/roles).
+- Under EVERY experience role, always include exactly 4 concise one-sentence bullets. Weave JD keywords and stack terms across those bullets and the skills section.
 - Always include a PROJECTS & PROFILE section with 2 to 3 short items from the base CV (tertAI, BrandoPilot, and always Upwork). The Upwork item MUST use this exact URL: https://www.upwork.com/freelancers/aakashgoel (Top Rated, 100% Job Success Score). Other projects may be rewritten to match the job when useful.
 - Role titles stay at the same seniority; company names and dates stay real; summaries and bullets should sound aligned with the target role.
 
 One page:
-- Summary about 3 to 4 sentences, up to 7 skill rows, exactly 4 experience roles, plus projects. Pack the page; do not leave it sparse. Still must fit one A4 page.
+- Summary about 3 to 4 sentences, up to 7 skill rows, exactly 4 experience roles with exactly 4 bullets each, plus projects. Pack the page; do not leave it sparse. Still must fit one A4 page.
 
 - ${NO_EM_DASH}
 - Return valid JSON only matching this shape:
