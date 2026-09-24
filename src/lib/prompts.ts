@@ -21,7 +21,7 @@ Dedicated matching (aggressive, not 100% literal to the base CV stack):
 - Reorder roles and bullets so the strongest match comes first.
 - Drop bullets that do not help this application.
 - Always include exactly 4 experience roles from the base CV (all four real employers/roles). Prefer 3 to 5 concise bullets on the strongest roles; later roles can be shorter (2 to 3 bullets).
-- Always include a PROJECTS section with 2 to 3 short items from the base CV (tertAI, BrandoPilot, Upwork profile as relevant), rewritten to match the job when useful.
+- Always include a PROJECTS & PROFILE section with 2 to 3 short items from the base CV (tertAI, BrandoPilot, and always Upwork). The Upwork item MUST use this exact URL: https://www.upwork.com/freelancers/aakashgoel (Top Rated, 100% Job Success Score). Other projects may be rewritten to match the job when useful.
 - Role titles stay at the same seniority; company names and dates stay real; summaries and bullets should sound aligned with the target role.
 
 One page:

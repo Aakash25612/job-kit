@@ -1,9 +1,35 @@
 import { NextResponse } from "next/server";
 import type { CvDocument } from "@/lib/cv";
+import { UPWORK_PROJECT, UPWORK_PROFILE_URL } from "@/lib/cv";
 import { chatJson, stripEmDashes } from "@/lib/openai";
 import { CV_SYSTEM } from "@/lib/prompts";
 
 export const runtime = "nodejs";
+
+function ensureUpworkProject(
+  projects: { name: string; description: string }[],
+): { name: string; description: string }[] {
+  const cleaned = projects.map((p) => ({
+    name: stripEmDashes(p.name),
+    description: stripEmDashes(p.description),
+  }));
+
+  const upworkIndex = cleaned.findIndex(
+    (p) => /upwork/i.test(p.name) || /upwork\.com/i.test(p.description),
+  );
+
+  if (upworkIndex >= 0) {
+    cleaned[upworkIndex] = {
+      name: "Upwork",
+      description: cleaned[upworkIndex].description.includes(UPWORK_PROFILE_URL)
+        ? cleaned[upworkIndex].description
+        : UPWORK_PROJECT.description,
+    };
+    return cleaned.slice(0, 3);
+  }
+
+  return [...cleaned.slice(0, 2), UPWORK_PROJECT];
+}
 
 function cleanCv(cv: CvDocument): CvDocument {
   return {
@@ -23,10 +49,7 @@ function cleanCv(cv: CvDocument): CvDocument {
       summary: e.summary ? stripEmDashes(e.summary) : undefined,
       bullets: (e.bullets || []).map(stripEmDashes),
     })),
-    projects: (cv.projects || []).slice(0, 3).map((p) => ({
-      name: stripEmDashes(p.name),
-      description: stripEmDashes(p.description),
-    })),
+    projects: ensureUpworkProject(cv.projects || []),
   };
 }
 
@@ -51,7 +74,7 @@ Requirements:
 - Map every major JD responsibility (including numbered items if present) into concrete experience bullets and/or skill lines.
 - Rewrite bullets in the job's language so the CV feels written for this role, not a lightly edited generic resume.
 - Always use exactly 4 experience roles from the base CV, with 3 to 5 concise bullets on the strongest roles (later roles can be shorter).
-- Always include a PROJECTS section with 2 to 3 items from the base CV.
+- Always include a PROJECTS & PROFILE section with 2 to 3 items from the base CV, and always include Upwork with https://www.upwork.com/freelancers/aakashgoel
 - Do not invent fake companies or fake dates.
 
 Job description:

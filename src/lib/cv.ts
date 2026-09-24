@@ -49,7 +49,7 @@ Full-Stack Engineer - Contract Engagements | Remote · Sep 2020 – Mar 2023
 PROJECTS & PROFILE
 tertAI: built solo, a platform that turns AI-generated apps (Cursor, v0) into live products, automating hosting, database setup and access control on AWS + Kubernetes.
 BrandoPilot (brandopilot.com): AI-powered, multi-tenant branding SaaS, built solo from zero to ~5,000 users.
-Upwork: upwork.com/freelancers/~01f4f4dcdc06800caf · Top Rated, 100% Job Success Score
+Upwork: https://www.upwork.com/freelancers/aakashgoel · Top Rated, 100% Job Success Score
 `.trim();
 
 export type CvExperience = {
@@ -64,6 +64,13 @@ export type CvExperience = {
 export type CvProject = {
   name: string;
   description: string;
+};
+
+export const UPWORK_PROFILE_URL = "https://www.upwork.com/freelancers/aakashgoel";
+
+export const UPWORK_PROJECT: CvProject = {
+  name: "Upwork",
+  description: `${UPWORK_PROFILE_URL} · Top Rated, 100% Job Success Score`,
 };
 
 export type CvDocument = {
