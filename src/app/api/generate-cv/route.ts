@@ -73,6 +73,7 @@ Requirements:
 - Skills must match the job stack and domain.
 - Map every major JD responsibility (including numbered items if present) into concrete experience bullets and/or skill lines.
 - Rewrite bullets in the job's language so the CV feels written for this role, not a lightly edited generic resume.
+- Write every experience bullet in company-need / action / result form (do not say STAR). Inventing plausible business context and impact is allowed.
 - Always use exactly 4 experience roles from the base CV.
 - Under every experience role, always include exactly 4 concise bullets that use the job's keywords and stack where relevant.
 - Always include a PROJECTS & PROFILE section with 2 to 3 items from the base CV, and always include Upwork with https://www.upwork.com/freelancers/aakashgoel
