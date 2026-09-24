@@ -27,33 +27,34 @@ type Density = {
   jobTitleLine: number;
 };
 
-/** Readable base. Scaled up/down so content fills one A4 page. */
+/** Slightly compact base so 4 roles + projects fit one page. */
 const BASE: Density = {
-  margin: 42,
-  nameSize: 17,
-  titleSize: 10.5,
-  contactSize: 9,
-  sectionSize: 10.5,
-  bodySize: 9.5,
-  jobTitleSize: 10,
-  metaSize: 8.5,
-  lineGap: 12,
-  sectionGap: 12,
-  jobGap: 8,
-  bulletGap: 2,
-  headerAfter: 12,
-  sectionRuleGap: 10,
-  jobRuleGap: 10,
-  nameGap: 20,
-  titleLine: 13,
-  contactLine: 11,
-  afterSectionTitle: 5,
-  jobTitleLine: 12,
+  margin: 36,
+  nameSize: 15.5,
+  titleSize: 9.5,
+  contactSize: 8,
+  sectionSize: 9.5,
+  bodySize: 8.5,
+  jobTitleSize: 9,
+  metaSize: 7.5,
+  lineGap: 10.5,
+  sectionGap: 8,
+  jobGap: 5,
+  bulletGap: 1.2,
+  headerAfter: 9,
+  sectionRuleGap: 7,
+  jobRuleGap: 7,
+  nameGap: 17,
+  titleLine: 11.5,
+  contactLine: 10,
+  afterSectionTitle: 3.5,
+  jobTitleLine: 11,
 };
 
-const MIN_SCALE = 0.88;
-const MAX_SCALE = 1.22;
-const TARGET_FILL = 0.96; // use most of the page, leave a little bottom margin
+const MIN_SCALE = 0.9;
+const MAX_SCALE = 1.06; // prefer packing content over enlarging sparse text
+const TARGET_FILL = 0.97;
+const MIN_BODY = 7.6; // floor: small but readable
 
 function wrapText(
   doc: jsPDF,
@@ -68,7 +69,7 @@ function wrapText(
 function scaleDensity(d: Density, scale: number): Density {
   const s = (n: number) => Math.max(6, n * scale);
   return {
-    margin: Math.max(28, d.margin * Math.min(1, 0.55 + scale * 0.45)),
+    margin: Math.max(28, d.margin * Math.min(1, 0.6 + scale * 0.4)),
     nameSize: s(d.nameSize),
     titleSize: s(d.titleSize),
     contactSize: s(d.contactSize),
@@ -79,7 +80,7 @@ function scaleDensity(d: Density, scale: number): Density {
     lineGap: s(d.lineGap),
     sectionGap: s(d.sectionGap),
     jobGap: s(d.jobGap),
-    bulletGap: Math.max(0.5, d.bulletGap * scale),
+    bulletGap: Math.max(0.4, d.bulletGap * scale),
     headerAfter: s(d.headerAfter),
     sectionRuleGap: s(d.sectionRuleGap),
     jobRuleGap: s(d.jobRuleGap),
@@ -141,6 +142,16 @@ function measureHeight(doc: jsPDF, cv: CvDocument, dens: Density): number {
     if (index < jobs.length - 1) h += dens.jobRuleGap;
   });
 
+  const projects = cv.projects || [];
+  if (projects.length) {
+    h += dens.sectionGap;
+    h += dens.sectionSize + dens.afterSectionTitle + dens.sectionRuleGap;
+    for (const project of projects) {
+      const text = `${project.name}: ${project.description}`;
+      h += wrapText(doc, text, w, dens.bodySize).length * dens.lineGap + 1.5;
+    }
+  }
+
   return h + dens.margin;
 }
 
@@ -150,12 +161,11 @@ function densityForPage(doc: jsPDF, cv: CvDocument): Density {
   let scale = available / Math.max(1, baseHeight);
   scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale));
 
-  // If still overflowing at min scale, try again with slightly reduced margin density.
   let dens = scaleDensity(BASE, scale);
   let height = measureHeight(doc, cv, dens);
   let guard = 0;
-  while (height > PAGE_HEIGHT - 8 && dens.bodySize > 7.2 && guard < 8) {
-    dens = scaleDensity(dens, 0.96);
+  while (height > PAGE_HEIGHT - 8 && dens.bodySize > MIN_BODY && guard < 10) {
+    dens = scaleDensity(dens, 0.97);
     height = measureHeight(doc, cv, dens);
     guard += 1;
   }
@@ -167,7 +177,7 @@ export function downloadCvPdf(cv: CvDocument, filename?: string) {
   const d = densityForPage(doc, cv);
   const contentWidth = PAGE_WIDTH - d.margin * 2;
   let y = d.margin;
-  const bottom = PAGE_HEIGHT - Math.min(d.margin, 28);
+  const bottom = PAGE_HEIGHT - Math.min(d.margin, 26);
 
   const drawRule = (
     color: [number, number, number],
@@ -181,12 +191,12 @@ export function downloadCvPdf(cv: CvDocument, filename?: string) {
     y += gapAfter;
   };
 
-  const headerRule = () => drawRule([120, 120, 120], 1.05, d.headerAfter);
-  const sectionRule = () => drawRule([180, 180, 180], 0.7, d.sectionRuleGap);
-  const jobRule = () => drawRule([210, 210, 210], 0.5, d.jobRuleGap);
+  const headerRule = () => drawRule([120, 120, 120], 1.0, d.headerAfter);
+  const sectionRule = () => drawRule([180, 180, 180], 0.65, d.sectionRuleGap);
+  const jobRule = () => drawRule([210, 210, 210], 0.45, d.jobRuleGap);
 
   const sectionTitle = (title: string) => {
-    if (y + 22 > bottom) return;
+    if (y + 20 > bottom) return;
     doc.setFont("helvetica", "bold");
     doc.setFontSize(d.sectionSize);
     doc.setTextColor(20, 20, 20);
@@ -249,7 +259,7 @@ export function downloadCvPdf(cv: CvDocument, filename?: string) {
       doc.text(valueLines[i], d.margin, y);
       y += d.lineGap;
     }
-    y += 1;
+    y += 0.8;
   }
   y += d.sectionGap;
 
@@ -257,7 +267,7 @@ export function downloadCvPdf(cv: CvDocument, filename?: string) {
   sectionTitle("EXPERIENCE");
   const jobs = cv.experience || [];
   jobs.forEach((job, index) => {
-    if (y + 30 > bottom) return;
+    if (y + 28 > bottom) return;
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(d.jobTitleSize);
@@ -272,7 +282,7 @@ export function downloadCvPdf(cv: CvDocument, filename?: string) {
     doc.setTextColor(90, 90, 90);
     const meta = [job.location, job.dates].filter(Boolean).join(" · ");
     doc.text(meta, d.margin, y);
-    y += d.metaSize + 3;
+    y += d.metaSize + 2.5;
 
     if (job.summary) {
       doc.setTextColor(40, 40, 40);
@@ -280,7 +290,7 @@ export function downloadCvPdf(cv: CvDocument, filename?: string) {
       const sLines = wrapText(doc, job.summary, contentWidth, d.bodySize);
       if (y + sLines.length * d.lineGap <= bottom) {
         doc.text(sLines, d.margin, y);
-        y += sLines.length * d.lineGap + 2;
+        y += sLines.length * d.lineGap + 1.5;
       }
     }
 
@@ -304,6 +314,37 @@ export function downloadCvPdf(cv: CvDocument, filename?: string) {
       jobRule();
     }
   });
+
+  // Projects
+  const projects = cv.projects || [];
+  if (projects.length && y + 28 <= bottom) {
+    y += Math.min(d.sectionGap, 6);
+    sectionTitle("PROJECTS & PROFILE");
+    for (const project of projects) {
+      if (y + d.lineGap > bottom) break;
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(d.bodySize);
+      doc.setTextColor(40, 40, 40);
+      const label = `${project.name}: `;
+      doc.text(label, d.margin, y);
+      const labelWidth = doc.getTextWidth(label);
+      doc.setFont("helvetica", "normal");
+      const descLines = wrapText(
+        doc,
+        project.description,
+        Math.max(40, contentWidth - labelWidth),
+        d.bodySize,
+      );
+      doc.text(descLines[0] || "", d.margin + labelWidth, y);
+      y += d.lineGap;
+      for (let i = 1; i < descLines.length; i++) {
+        if (y + d.lineGap > bottom) break;
+        doc.text(descLines[i], d.margin, y);
+        y += d.lineGap;
+      }
+      y += 1.2;
+    }
+  }
 
   const safeName = (filename || `${cv.name.replace(/\s+/g, "_")}_CV`).replace(
     /[^\w.-]+/g,

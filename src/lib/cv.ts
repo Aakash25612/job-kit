@@ -61,6 +61,11 @@ export type CvExperience = {
   bullets: string[];
 };
 
+export type CvProject = {
+  name: string;
+  description: string;
+};
+
 export type CvDocument = {
   name: string;
   title: string;
@@ -68,4 +73,5 @@ export type CvDocument = {
   summary: string;
   skills: { label: string; value: string }[];
   experience: CvExperience[];
+  projects?: CvProject[];
 };

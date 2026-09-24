@@ -20,11 +20,12 @@ Dedicated matching (aggressive, not 100% literal to the base CV stack):
 - Prefer the job's exact tech names and phrases when covering requirements.
 - Reorder roles and bullets so the strongest match comes first.
 - Drop bullets that do not help this application.
-- Keep 3 to 5 concise bullets per role (one sentence each).
+- Always include exactly 4 experience roles from the base CV (all four real employers/roles). Prefer 3 to 5 concise bullets on the strongest roles; later roles can be shorter (2 to 3 bullets).
+- Always include a PROJECTS section with 2 to 3 short items from the base CV (tertAI, BrandoPilot, Upwork profile as relevant), rewritten to match the job when useful.
 - Role titles stay at the same seniority; company names and dates stay real; summaries and bullets should sound aligned with the target role.
 
 One page:
-- Summary about 3 to 4 sentences, up to 6 skill rows, 3 experience roles. Enough substance to fill one A4 page, not a sparse stub.
+- Summary about 3 to 4 sentences, up to 7 skill rows, exactly 4 experience roles, plus projects. Pack the page; do not leave it sparse. Still must fit one A4 page.
 
 - ${NO_EM_DASH}
 - Return valid JSON only matching this shape:
@@ -41,7 +42,8 @@ One page:
     "location": string,
     "summary": string,
     "bullets": string[]
-  }]
+  }],
+  "projects": [{ "name": string, "description": string }]
 }
 
 Base CV (anchors for identity, employers, dates, metrics):

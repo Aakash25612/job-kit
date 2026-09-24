@@ -139,6 +139,22 @@ export default function CvBuilderPage() {
                   ))}
                 </div>
               </div>
+
+              {!!cv.projects?.length && (
+                <div>
+                  <h3 className="text-xs font-semibold tracking-wide text-zinc-500">
+                    PROJECTS & PROFILE
+                  </h3>
+                  <ul className="mt-2 space-y-1.5">
+                    {cv.projects.map((p) => (
+                      <li key={p.name}>
+                        <span className="font-medium">{p.name}:</span>{" "}
+                        {p.description}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </article>
           )}
         </section>

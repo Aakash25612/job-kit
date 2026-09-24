@@ -15,13 +15,17 @@ function cleanCv(cv: CvDocument): CvDocument {
       label: stripEmDashes(s.label),
       value: stripEmDashes(s.value),
     })),
-    experience: (cv.experience || []).map((e) => ({
+    experience: (cv.experience || []).slice(0, 4).map((e) => ({
       role: stripEmDashes(e.role),
       company: stripEmDashes(e.company),
       dates: stripEmDashes(e.dates),
       location: stripEmDashes(e.location),
       summary: e.summary ? stripEmDashes(e.summary) : undefined,
       bullets: (e.bullets || []).map(stripEmDashes),
+    })),
+    projects: (cv.projects || []).slice(0, 3).map((p) => ({
+      name: stripEmDashes(p.name),
+      description: stripEmDashes(p.description),
     })),
   };
 }
@@ -39,14 +43,15 @@ export async function POST(request: Request) {
 
     const cv = await chatJson<CvDocument>(
       CV_SYSTEM,
-      `Build a DEDICATED CV for this job description, one full A4 page (not sparse, not overflowing).
+      `Build a DEDICATED CV for this job description, one full A4 page (dense, not sparse, not overflowing).
 
 Requirements:
 - Keep real employers, dates, contact, and seniority from the base CV.
 - Skills must match the job stack and domain.
 - Map every major JD responsibility (including numbered items if present) into concrete experience bullets and/or skill lines.
 - Rewrite bullets in the job's language so the CV feels written for this role, not a lightly edited generic resume.
-- Use 3 roles with 3 to 5 concise bullets each.
+- Always use exactly 4 experience roles from the base CV, with 3 to 5 concise bullets on the strongest roles (later roles can be shorter).
+- Always include a PROJECTS section with 2 to 3 items from the base CV.
 - Do not invent fake companies or fake dates.
 
 Job description:
