@@ -28,7 +28,7 @@ That is all. Build command is `npm run build`, output is the default Next.js app
 
 ## Notes
 
-- Base CV is embedded from `Aakash_Goel_CV_FULL_STACK.pdf` in `src/lib/cv.ts`
+- Base CV is embedded from `Aakash_Goel_CV_FullStack_AI.pdf` in `src/lib/cv.ts`
 - Outputs avoid em dashes
 - Answers stay short unless you add a length note
 - PDF is generated in the browser with jsPDF after the tailored CV JSON returns

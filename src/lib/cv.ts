@@ -1,49 +1,55 @@
-/** Base CV text used to tailor applications. Source: Aakash_Goel_CV_FULL_STACK.pdf */
+/** Base CV text used to tailor applications. Source: Aakash_Goel_CV_FullStack_AI.pdf */
 
 export const BASE_CV = `
 AAKASH GOEL
-Senior Full-Stack Engineer & Team Lead · React / Next.js · Node.js · Python · AI & LLM Systems
+Full-Stack Engineer · AI-Powered Products, AI Agents & Automation
 Delhi, India (Remote) | aakashgoel2040@gmail.com | +91-8015482069 | aakashhportfolioo.netlify.app | github.com/Aakash25612
 
 SUMMARY
-Senior full-stack engineer with 8 years building and shipping production web and mobile products end to end, with applications serving 10,000+ users. Owned the full lifecycle - architecture, backend, frontend, infrastructure and release - across telemedicine, logistics, e-commerce and SaaS, and led a team of 5 engineers (2 frontend, 2 backend, 1 QA) on delivery. Deep hands-on experience building AI-native systems: multi-model generative pipelines, agentic tool-use and function calling, vector search, and multi-provider LLM architectures in production. Most recently designed and launched an AI-powered branding platform solo, from zero to production in under five months. Available for full-time remote roles; open to EOR or contractor engagement.
+Full-stack engineer with 6 years of experience designing, building and shipping production web, mobile and AI products end to end. Apps I have built serve 1M+ users combined, with several past 10,000+ users and some used daily by enterprises. I build AI-native systems: LLM agents with tool use and function calling, RAG pipelines, multi-provider LLM setups and workflow automations that replace manual work. Strong in React/Next.js, Node.js, Python/FastAPI, PostgreSQL and AWS. I regularly lead engineering teams of 3 to 9 developers, and I took an AI SaaS from zero to production solo in under five months. Upwork Top Rated, 100% Job Success Score.
 
 TECHNICAL SKILLS
-Frontend: React, Next.js, TypeScript, JavaScript (ES6+), Tailwind CSS, HTML5, CSS3
-Backend: Node.js, Express, Python, FastAPI, REST, GraphQL, WebSockets, auth, payments
-AI / LLM: LLM API integration (Claude, OpenAI), agentic tool-use & function calling, RAG & vector search (pgvector, Pinecone), FLUX diffusion & vision endpoints, LiteLLM multi-provider architecture, structured JSON generation
-Mobile: React Native, Flutter (iOS & Android), App Store / Play Store release
-Data: PostgreSQL, MongoDB, Redis, Firebase, Supabase
-Infra: AWS, Vercel, Docker, CI/CD, Git, serverless / edge functions
+AI / Agents: Claude & OpenAI APIs, AI agents with tool use & function calling, RAG & vector search (pgvector, Pinecone), LiteLLM multi-provider routing, structured JSON output, vision models, AI chatbots
+Automation: Workflow automation, Temporal, queues & background jobs, webhooks, Playwright / Puppeteer browser automation, Google Apps Script, scheduled jobs, third-party API integrations
+Frontend: React, Next.js, TypeScript, JavaScript (ES6+), Tailwind CSS
+Backend: Node.js, Express, Python, FastAPI, REST, GraphQL, WebSockets, microservices, Go, Kafka
+Data: PostgreSQL (row-level security, multi-tenant), MongoDB, Redis, Firebase, Supabase
+Cloud / DevOps: AWS (EC2, ECS, Lambda, RDS, S3, CloudFront, IAM), Azure, Docker, Kubernetes, CI/CD, Vercel
+Mobile: React Native, Flutter (iOS & Android), App Store / Play Store releases
+Billing & Testing: Stripe, Polar.sh, webhook verification · pytest, Jest, Supertest, Postman/Newman in CI
 
 EXPERIENCE
 
-Founding Engineer - BrandoPilot | Remote · Jan 2026 – May 2026
-Sole engineer on an AI-powered branding platform for global markets (brandopilot.com) - ~5,000 users.
-- Architected and built the entire product with no other engineering resource: Next.js frontend, Node.js backend, Supabase data layer, deployment and infrastructure.
-- Designed a hybrid template rendering engine generating brand assets from structured LLM output, with machine-readable metadata for downstream consumption.
-- Implemented Generative Engine Optimization - public schema design targeting AI-indexable visibility, ahead of the market on a discovery channel most products still ignore.
-- Took the product from zero to live production in under five months and grew it to roughly 5,000 users.
+Senior Full-Stack & AI Engineer / Team Lead - Independent Consulting | Remote · Mar 2024 – Present
+Lead engineer on web, mobile and AI products for startups and product teams in the US, UK and Europe.
+- Lead engineering teams of 3–9 across projects (frontend, backend, mobile, QA), owning architecture, code review, sprint planning and release quality.
+- AI agents: built LLM agents with tool use and function calling that read live data, call internal APIs and take actions, with schema-validated outputs and safe fallbacks; cut manual handling for client ops teams by ~60%.
+- AI automations: replaced manual work with automated pipelines (webhooks, queues, scheduled jobs, browser automation) for lead capture, data extraction, CRM sync and reporting, saving clients 20+ hours of manual work per week.
+- Enterprise CRM: built with native HubSpot, Slack and email integrations plus an AI chatbot layer, used daily by 40+ sales and support staff; cut lead response time from hours to minutes.
+- AI media platform: multi-model generative workflows (LLMs, diffusion, vision) with async job queues and WebSocket progress streaming; cut JSON validation failures from ~8% to under 0.5%.
+- Migrated a client's single-vendor inference pipeline to a multi-provider LLM architecture (LiteLLM), removing vendor lock-in and lowering inference costs by ~30%.
+- Logology & Feedspace: Stripe subscription billing end to end; fixed a seller-earnings drift bug by making transactions the single source of truth, ending payout disputes.
+- Automated API testing with pytest, Jest + Supertest and Postman/Newman in CI, covering failure paths and cross-tenant access; raised coverage to 80%+ and cut production regressions by ~50%.
+- Shipped telemedicine dashboards (10,000+ users), a real-time logistics dispatch system and Flutter / React Native apps to both stores.
 
-Senior Full-Stack Engineer / Team Lead - Independent Consulting | Remote · Mar 2024 – Present
-Engineering lead on web, mobile and AI products for venture-backed startups and international product teams.
-- Led a team of 5 - 2 frontend engineers, 2 backend engineers and 1 QA - owning architecture decisions, code review, sprint planning and release quality.
-- AI Media Generation Platform: architected multi-model generative workflows integrating LLMs, FLUX diffusion models and vision endpoints into one automated pipeline for brand asset and media rendering. Optimized prompt-chaining and structured JSON parsing with schema validation at the pipeline boundary, driving validation failures to near zero. Built the cost and reliability layer - credit-based billing, rate limiting and response caching on Supabase Edge Functions and Redis - cutting third-party inference spend while holding low-latency execution.
-- AI-Native Application Platform: built AI-native web applications from scratch implementing agentic tool-use, function calling and vector search (pgvector / Pinecone) for context-aware generation. Engineered async background job queues and WebSocket streaming in Next.js and Node.js to deliver real-time progress during heavy generative rendering, plus secure serverless pipelines for dynamic asset creation and cross-platform export.
-- Telemedicine platform: delivered a healthcare provider dashboard serving 10,000+ users, covering patient data views, scheduling and role-based access control.
-- Enterprise CRM: built independently with native HubSpot, Slack and email integrations plus an AI chatbot layer, covering OAuth flows, sync logic, webhooks and rate-limit handling.
-- Logistics dispatch: built a real-time service queue system handling live dispatch and status propagation, React/Next.js frontend against a Node.js WebSocket backend.
-- Migrated a client's legacy Replicate inference pipeline to a multi-provider LLM architecture via LiteLLM, adding structured text generation and generative asset indexing while removing single-vendor dependency.
-- Shipped multiple cross-platform mobile applications in Flutter and React Native, owning the cycle from UI implementation through App Store and Play Store release.
-- Established an AI-assisted development workflow (Cursor, Claude Code) with retained code review and test discipline, compressing delivery cycles substantially.
-- Rated in the top 10% of engineers on Upwork - Top Rated, 100% Job Success Score, 5.0/5.0 across 32 client reviews.
+Founding Engineer - BrandoPilot (brandopilot.com) | Remote · Jan 2026 – May 2026
+Sole engineer on an AI-powered branding SaaS: Next.js frontend, Node.js backend, Supabase/PostgreSQL, AWS deployment.
+- Built a rendering engine that turns structured LLM output into brand assets; multi-tenant auth with PostgreSQL row-level security.
+- Integrated Polar.sh subscriptions with verified webhooks; took the product from zero to production in under 5 months, ~5,000 users.
 
-Full-Stack Engineer - Contract Engagements | Remote · Sep 2018 – Mar 2024
-Long-running engineering engagements with international clients across e-commerce, on-demand services and SaaS.
-- Architected and deployed production applications and backend services supporting recurring commercial workloads.
-- Built responsive React frontends against Node.js and Firebase backends, integrating third-party APIs for payments, messaging and data sync.
-- Handled database design and query optimization across relational and document stores, removing API latency bottlenecks through indexing strategy and query tuning.
-- Retained by multiple clients across successive engagements on the strength of delivery consistency.
+Full-Stack Engineer - KL Dugar Group | Mar 2023 – Sep 2025
+- Built a centralized ERP used by 200+ staff across 5 business units, replacing spreadsheet-driven processes and cutting manual reporting time by ~70%.
+- Built a CRM unifying leads and customer history, and an insurance management system for policies, renewals and claims that cut claim processing time by ~40%.
+- Built a real-time fleet management system tracking 100+ vehicles, and an AI chatbot that now resolves ~60% of routine queries without staff.
+
+Full-Stack Engineer - Contract Engagements | Remote · Sep 2020 – Mar 2023
+- Delivered 30+ production apps for e-commerce, on-demand and SaaS clients: React frontends on Node.js/Firebase backends, with payments, messaging and data sync APIs.
+- Designed databases and tuned queries and indexes to cut API response times by up to 60%; retained by clients across repeat engagements.
+
+PROJECTS & PROFILE
+tertAI: built solo, a platform that turns AI-generated apps (Cursor, v0) into live products, automating hosting, database setup and access control on AWS + Kubernetes.
+BrandoPilot (brandopilot.com): AI-powered, multi-tenant branding SaaS, built solo from zero to ~5,000 users.
+Upwork: upwork.com/freelancers/~01f4f4dcdc06800caf · Top Rated, 100% Job Success Score
 `.trim();
 
 export type CvExperience = {
